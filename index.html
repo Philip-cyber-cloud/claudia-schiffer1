@@ -410,10 +410,29 @@
     if (!firstName || !email) { alert('Please enter your name and email address.'); return; }
     if (!email.includes('@')) { alert('Please enter a valid email address.'); return; }
     if (!agreed) { alert('Please agree to the terms to subscribe.'); return; }
-    document.getElementById('subscribeForm').style.display = 'none';
-    const success = document.getElementById('subscribeSuccess');
-    success.style.display = 'block';
-    success.querySelector('p').innerHTML = `Thank you, <strong style="color:var(--gold-light)">${firstName}</strong>! You will receive exclusive updates<br>from the world of Claudia Schiffer directly to your inbox.`;
+    fetch('https://formspree.io/f/xlgvgkrk', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        firstName: firstName,
+        lastName: document.getElementById('lastName').value.trim(),
+        email: email,
+        phone: document.getElementById('phoneNum').value.trim(),
+        country: document.getElementById('countrySelect').value,
+        interests: document.getElementById('interests').value,
+      })
+    })
+    .then(res => {
+      if (res.ok) {
+        document.getElementById('subscribeForm').style.display = 'none';
+        const success = document.getElementById('subscribeSuccess');
+        success.style.display = 'block';
+        success.querySelector('p').innerHTML = `Thank you, <strong style="color:var(--gold-light)">${firstName}</strong>! You will receive exclusive updates<br>from the world of Claudia Schiffer directly to your inbox.`;
+      } else {
+        alert('Something went wrong. Please try again.');
+      }
+    })
+    .catch(() => alert('Network error. Please try again.'));
   }
   
   const lbImg = document.getElementById('lbImg');
